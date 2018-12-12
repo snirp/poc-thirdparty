@@ -1,0 +1,5 @@
+
+(function printHi(){
+  alert("hoi");
+})();
+
