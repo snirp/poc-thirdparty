@@ -1,0 +1,36 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: white;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.3/iframeResizer.contentWindow.min.js" integrity="sha256-xF+/yQUjfxb6NkS6541gf8bm9uH2LTfqaW1M98Hc/q4=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <h1>This is the embed</h1>
+      <p id="paragraph">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+      <script defer>
+        p = document.createElement('p')
+        txt = document.createTextNode("Hi there and greetings!"); 
+        p.appendChild(txt);
+
+        const numberOfTimes = 5;
+        const delay = 1000;
+
+        for (let i = 0; i < numberOfTimes; i++) {
+            setTimeout( function(){
+              document.body.appendChild(p.cloneNode(true))
+          }, delay * i);
+        }
+
+      </script>
+
+  </body>
+</html>
