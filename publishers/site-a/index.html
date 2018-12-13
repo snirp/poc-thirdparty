@@ -6,11 +6,20 @@
   </head>
   <body>
       <h1>This site A</h1>
+
+      <!--UNIVERSAL EMBED CODE-->
       <script>
-        function loaded(){
-          console.log("loaded ready")
-        };
+        const braincard_config = {
+          url:    "http://127.0.0.1:8001/index.html", // default to window.location.href
+          title:  "Interesting kitten facts", // default to document.title
+          id:     "12345", // just unique, set automatically for wordpress etc
+        }
       </script>
-      <script src="127.0.0.1:8080/widget.js" async onload="loaded()"></script>
+
+      <div>
+        <!-- THE QUESTIONS WILL APPEAR HERE -->
+        <script async src="http://127.0.0.1:8080/my-site/widget.js"></script>
+        <!-- <script async src="https://brain.cards/my-site/widget.js"></script> -->
+      </div>
   </body>
 </html>
