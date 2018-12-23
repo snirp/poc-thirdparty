@@ -1,11 +1,13 @@
 
-let braincards = (function(window, undefined){
+let braincards = (function(undefined){
   
   let braincards = {};
   let iframe = document.createElement('iframe');
   iframe.style.width = '100%';
   iframe.style.height= "0";  // Set a low initial height, as resizer doesn't handle it properly
+  iframe.style.border = 'none';
 
+  /** Load a script asynchronously with optional callback */
   function loadScript(url, integrity=undefined, callback=undefined) {
     const script = document.createElement('script');
     script.async = true;
@@ -21,7 +23,7 @@ let braincards = (function(window, undefined){
   }
 
   /**
-   * Locate the script tag that loads this script
+   * Locate the script tag that loaded this script
    * return the element, and all params (including site-name)
    */
   function getElementAndParams(){
@@ -50,7 +52,7 @@ let braincards = (function(window, undefined){
       'sha256-DyeqmZcGhOAc1ZUAyHN3cS9xC3HsFj27zcWVbK6/m0I=',
       function(){ 
         console.log("Converting iframe into resizable one....")
-        iframe = iFrameResize({log:true}, iframe) 
+        iframe = iFrameResize({log:false}, iframe) 
       },
       )
   }
@@ -63,15 +65,27 @@ let braincards = (function(window, undefined){
 
   // TODO security: trusting the user with number of params and value (no escaping)
   const queryParams = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
-  const url = 'http://127.0.0.1:8080/embed.html'+'?'+queryParams
+  const url = 'http://127.0.0.1:8000/static/cards/embed.html'+'#'+queryParams
   console.log(url);
   iframe.src = url
- 
-  iframe.style.border = 'none';
 
-  target.parentNode.insertBefore(iframe, target);
 
+  iframeEl = target.parentNode.insertBefore(iframe, target);
+
+  // iframe has correct contentWindow on load
+  iframeEl.onload = function() {
+    const w = iframeEl.contentWindow;
+    w.postMessage('First message to iframe after it loaded', 'http://127.0.0.1:8000')
+  }
+
+  function receiver(ev){
+    console.log("We've got a message!");
+    console.log("* message: ", ev.data);
+    console.log("* origin: ", ev.origin);
+    console.log("* source: ", ev.source);
+  }
+
+  window.addEventListener('message', receiver, false)
 
   return braincards;
 })();
-

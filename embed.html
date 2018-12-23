@@ -10,25 +10,75 @@
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.3/iframeResizer.contentWindow.min.js" integrity="sha256-xF+/yQUjfxb6NkS6541gf8bm9uH2LTfqaW1M98Hc/q4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
   </head>
   <body>
     <h1>This is the embed</h1>
-      <p id="paragraph">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </p>
-      <script defer>
-        p = document.createElement('p')
-        txt = document.createTextNode("Hi there and greetings!"); 
-        p.appendChild(txt);
+      <div id="question">
 
-        const numberOfTimes = 5;
-        const delay = 1000;
+      </div>
 
-        for (let i = 0; i < numberOfTimes; i++) {
-            setTimeout( function(){
-              document.body.appendChild(p.cloneNode(true))
-          }, delay * i);
+      <script>
+        function getParams(){
+          const params = {};
+          const hash = window.location.hash.split('#')[1]
+          hash.split("&").forEach(function(part) {
+            var item = part.split("=");
+            params[item[0]] = item[1];
+          });
+          return params
         }
+        
+        const params = getParams();
+
+        console.log(params)
+
+        const getPage = async () => {
+          try {
+            return await axios.get(`http://127.0.0.1:8000/rest/quiz/${params.shortname}/${params.identifier}`)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        const countQuestions = async () => {
+          const page = await getPage()
+          console.log(page.data.question_set.length)
+        }
+
+        countQuestions()
+
+        const renderQuestions = async () => {
+          // TEMPORARY UGLY RENDERING
+          const page = await getPage()
+          const el = document.getElementById('question');
+          const count = `<div>${page.data.question_set.length} questions</div>`
+          el.insertAdjacentHTML('beforeend', count);
+
+          for (let qset of page.data.question_set){
+            const qel = `<div>${qset.question}</div>`;
+            el.insertAdjacentHTML('beforeend', qel);
+            for(let choice of qset.choice_set){
+              const chel = `<div>${choice.choice}</div>`;
+              el.insertAdjacentHTML('beforeend', chel);
+            }
+          }
+        }
+
+        renderQuestions()
+
+        function receiver(ev){
+          console.log("We've got a message!");
+          console.log("* message: ", ev.data);
+          console.log("* origin: ", ev.origin);
+          console.log("* source: ", ev.source);
+        }
+
+        window.addEventListener('message', receiver, false)
+
+        const w = window.parent;
+        w.postMessage('Posted from the embed', 'http://127.0.0.1:8001');
+
 
       </script>
 
